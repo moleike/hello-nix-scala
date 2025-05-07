@@ -1,0 +1,7 @@
+result
+**/target/
+**/dist
+.git
+.bsp
+.metals
+.DS_Store

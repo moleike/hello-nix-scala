@@ -1,0 +1,21 @@
+close_fw_lambda/generated
+close_fw_lambda/target
+target
+result
+/bin/
+.DS_Store
+*.log
+*.log.*
+*.zip
+
+# idea
+.idea
+
+
+# metals
+.metals
+.bloop
+project/**/metals.sbt
+
+# bsp
+.bsp
