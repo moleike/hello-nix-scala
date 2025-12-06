@@ -5,11 +5,12 @@
 
   # Flake inputs
   inputs = {
-    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.2305.491812";
-    flake-utils.url = github:numtide/flake-utils;
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    flake-utils.url = "github:numtide/flake-utils";
     sbt = {
       url = "github:zaninime/sbt-derivation";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
     };
   };
 
@@ -36,35 +37,19 @@
 
       in
       {
-        # Package outputs
-        packages = {
-          default = sbt.mkSbtDerivation.${system} {
-            pname = name;
-            inherit version;
-            depsSha256 = "sha256-xSKC0PRl/8OQwFtxUycNGWenagQOTHW3R5CeUimdZes=";
-            src = ./.;
-            depsWarmupCommand = ''
-              sbt 'managedClasspath; compilers'
-            '';
-            startScript = ''
-              #!${pkgs.runtimeShell}
-
-              exec ${jre}/bin/java \
-                ''${JAVA_OPTS:-} \
-                -jar \
-                "${placeholder "out"}/share/java/${name}.jar" \
-                "$@"
-            '';
-            buildPhase = ''
-              sbt assembly
-            '';
-            installPhase = ''
-              mkdir -p $out/share/java
-              cp target/scala-3.3.3/${name}.jar $_
-              install -T -D -m755 $startScriptPath $out/bin/${name}
-            '';
-            passAsFile = [ "startScript" ];
-          };
+        packages.default = sbt.mkSbtDerivation.${system} {
+          pname = name;
+          inherit version;
+          src = ./.;
+          nativeBuildInputs = with pkgs; [makeWrapper];
+          buildInputs = with pkgs; [jre];
+          depsSha256 = "";
+          buildPhase = "sbt assembly";
+          installPhase = "install -T -D -m755 target/${name}.jar $out/bin/${name}";
+          postFixup = ''
+            wrapProgram $out/bin/${name} \
+              --prefix PATH : ${nixpkgs.lib.makeBinPath [ jre ]}
+          '';
         };
       }
     );

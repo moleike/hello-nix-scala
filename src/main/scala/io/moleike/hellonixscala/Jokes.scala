@@ -1,7 +1,6 @@
 package io.moleike.hellonixscala
 
 import cats.effect.IO
-import cats.implicits._
 import io.circe.{Decoder, Encoder}
 import io.circe._
 import org.http4s.Method._

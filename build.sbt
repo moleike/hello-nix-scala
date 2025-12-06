@@ -1,4 +1,4 @@
-val Http4sVersion = "0.23.30"
+val Http4sVersion = "0.23.32"
 val CirceVersion = "0.14.10"
 val MunitVersion = "1.1.0"
 val LogbackVersion = "1.5.16"
@@ -9,7 +9,7 @@ lazy val root = (project in file("."))
     organization := "io.moleike",
     name := "hello-nix-scala",
     version := "0.0.1-SNAPSHOT",
-    scalaVersion := "3.3.3",
+    scalaVersion := "3.7.4",
     libraryDependencies ++= Seq(
       "org.http4s"      %% "http4s-ember-server" % Http4sVersion,
       "org.http4s"      %% "http4s-ember-client" % Http4sVersion,
@@ -20,8 +20,10 @@ lazy val root = (project in file("."))
       "ch.qos.logback"  %  "logback-classic"     % LogbackVersion
     ),
     assembly / assemblyJarName := "hello-nix-scala.jar",
+    assembly / assemblyOutputPath := file(s"target/${(assembly/assemblyJarName).value}"),
     assembly / assemblyMergeStrategy := {
       case "module-info.class" => MergeStrategy.discard
       case x => (assembly / assemblyMergeStrategy).value.apply(x)
-    }
+    },
+    ThisBuild / assemblyPrependShellScript := Some(sbtassembly.AssemblyPlugin.defaultShellScript)
   )
