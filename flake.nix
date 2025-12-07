@@ -40,10 +40,10 @@
         packages.default = sbt.mkSbtDerivation.${system} {
           pname = name;
           inherit version;
+          depsSha256 = "sha256-2FAQwzKu7ADT5D2HPLNcrM/7OSUZcGMyQ6P6f1xWq9U=";
           src = ./.;
           nativeBuildInputs = with pkgs; [makeWrapper];
           buildInputs = with pkgs; [jre];
-          depsSha256 = "";
           buildPhase = "sbt assembly";
           installPhase = "install -T -D -m755 target/${name}.jar $out/bin/${name}";
           postFixup = ''

@@ -6,8 +6,7 @@ COPY . /tmp/build
 
 RUN mkdir /tmp/nix-store-closure
 
-RUN --mount=type=cache,target=/nix,from=nixos/nix:latest,source=/nix \
-    --mount=type=cache,target=/root/.cache <<EOF
+RUN --mount=type=cache,target=/nix,from=nixos/nix:latest,source=/nix <<EOF
   nix \
     --extra-experimental-features "nix-command flakes" \
     --option filter-syscalls false \

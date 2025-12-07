@@ -1,14 +1,19 @@
+import sbtassembly.AssemblyPlugin.defaultShellScript
+
 val Http4sVersion = "0.23.32"
-val CirceVersion = "0.14.10"
+val CirceVersion = "0.14.15"
 val MunitVersion = "1.1.0"
 val LogbackVersion = "1.5.16"
 val MunitCatsEffectVersion = "2.0.0"
+
+ThisBuild / assemblyPrependShellScript := Some(defaultShellScript)
+ThisBuild / assemblyCacheOutput := false
 
 lazy val root = (project in file("."))
   .settings(
     organization := "io.moleike",
     name := "hello-nix-scala",
-    version := "0.0.1-SNAPSHOT",
+    version := "0.0.1",
     scalaVersion := "3.7.4",
     libraryDependencies ++= Seq(
       "org.http4s"      %% "http4s-ember-server" % Http4sVersion,
@@ -19,11 +24,9 @@ lazy val root = (project in file("."))
       "org.typelevel"   %% "munit-cats-effect"   % MunitCatsEffectVersion % Test,
       "ch.qos.logback"  %  "logback-classic"     % LogbackVersion
     ),
-    assembly / assemblyJarName := "hello-nix-scala.jar",
-    assembly / assemblyOutputPath := file(s"target/${(assembly/assemblyJarName).value}"),
+    assembly / assemblyOutputPath := file(s"target/${name.value}.jar"),
     assembly / assemblyMergeStrategy := {
       case "module-info.class" => MergeStrategy.discard
       case x => (assembly / assemblyMergeStrategy).value.apply(x)
-    },
-    ThisBuild / assemblyPrependShellScript := Some(sbtassembly.AssemblyPlugin.defaultShellScript)
+    }
   )
