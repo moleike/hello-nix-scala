@@ -35,6 +35,14 @@
           jdk = pkgs.jdk_headless;
         };
 
+        getDepsSha256 = { system }:
+          let
+            hash = {
+              "aarch64-darwin" = "sha256-QzQ+seWSyhyCXvPoUTf9Bk0JVcooM9Xn6QXiOHBYL1I=";
+              "aarch64-linux" = "sha256-txBzKHePjBozIm7VtzzXUTrTNz//F19BfaeAGkR6b2M=";
+            };
+          in hash.${system};
+
       in
       {
         packages.default = sbt.mkSbtDerivation.${system} {
@@ -43,7 +51,7 @@
           src = ./.;
           nativeBuildInputs = with pkgs; [makeWrapper];
           buildInputs = with pkgs; [jre];
-          depsSha256 = "";
+          depsSha256 = getDepsSha256 { inherit system; };
           buildPhase = "sbt assembly";
           installPhase = "install -T -D -m755 target/${name}.jar $out/bin/${name}";
           postFixup = ''
