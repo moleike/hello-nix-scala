@@ -1,13 +1,8 @@
-import sbtassembly.AssemblyPlugin.defaultShellScript
-
 val Http4sVersion = "0.23.32"
 val CirceVersion = "0.14.15"
 val MunitVersion = "1.1.0"
 val LogbackVersion = "1.5.16"
 val MunitCatsEffectVersion = "2.0.0"
-
-ThisBuild / assemblyPrependShellScript := Some(defaultShellScript)
-ThisBuild / assemblyCacheOutput := false
 
 lazy val root = (project in file("."))
   .settings(
@@ -23,10 +18,6 @@ lazy val root = (project in file("."))
       "org.scalameta"   %% "munit"               % MunitVersion           % Test,
       "org.typelevel"   %% "munit-cats-effect"   % MunitCatsEffectVersion % Test,
       "ch.qos.logback"  %  "logback-classic"     % LogbackVersion
-    ),
-    assembly / assemblyOutputPath := file(s"target/${name.value}.jar"),
-    assembly / assemblyMergeStrategy := {
-      case "module-info.class" => MergeStrategy.discard
-      case x => (assembly / assemblyMergeStrategy).value.apply(x)
-    }
+    )
   )
+  .enablePlugins(JavaAppPackaging)

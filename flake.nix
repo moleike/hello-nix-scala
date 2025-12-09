@@ -15,8 +15,16 @@
   };
 
   # Flake outputs
-  outputs = { self, nixpkgs, sbt, flake-utils, ... }:
-    flake-utils.lib.eachDefaultSystem (system:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      sbt,
+      flake-utils,
+      ...
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
       let
         name = "hello-nix-scala";
         version = "0.1.0";
@@ -42,13 +50,17 @@
           inherit version;
           depsSha256 = "sha256-2FAQwzKu7ADT5D2HPLNcrM/7OSUZcGMyQ6P6f1xWq9U=";
           src = ./.;
-          nativeBuildInputs = with pkgs; [makeWrapper];
-          buildInputs = with pkgs; [jre];
-          buildPhase = "sbt assembly";
-          installPhase = "install -T -D -m755 target/${name}.jar $out/bin/${name}";
+          nativeBuildInputs = with pkgs; [ makeWrapper ];
+          buildPhase = "sbt stage";
+          installPhase = "cp -ar target/universal/stage/ $out";
           postFixup = ''
-            wrapProgram $out/bin/${name} \
-              --prefix PATH : ${nixpkgs.lib.makeBinPath [ jre ]}
+            wrapProgram $out/bin/${name} --prefix PATH : ${
+              nixpkgs.lib.makeBinPath [
+                pkgs.coreutils
+                pkgs.gawk
+                jre
+              ]
+            }
           '';
         };
       }
